@@ -1,11 +1,11 @@
 # ----------------------------------------------------------------------------------
 # Commands to run this compose file:
 #
-#   docker compose -p classmate_app-integrated -f docker-compose.yml up -d
+#   docker compose -p classmate3000_app-integrated -f docker-compose.yml up -d
 #       - Starts containers in detached mode (-d)
 #       - Uses existing images if already built
 #
-#   docker compose -p classmate_app-integrated -f docker-compose.yml up -d --build
+#   docker compose -p classmate3000_app-integrated -f docker-compose.yml up -d --build
 #       - Forces rebuild of images before starting containers
 # ----------------------------------------------------------------------------------
 
