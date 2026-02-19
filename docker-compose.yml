@@ -40,8 +40,12 @@ services:
     restart: unless-stopped
     ports:
       - "27017:27017"
+    volumes:
+      # Mount init scripts so Mongo runs init.js on first boot and seeds taskdb/reminderdb #Nezihe
+      - ./docker/mongodb:/docker-entrypoint-initdb.d:ro
     networks:
       - classmate-network
+
 
   # ===============================
   # User Service
