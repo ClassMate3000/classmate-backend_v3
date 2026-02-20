@@ -18,8 +18,8 @@ public class CorsConfig {
 
         // Allowed origins (add Vercel later)
         config.setAllowedOrigins(List.of(
-                "http://localhost:5173"
-                // "https://your-app-name.vercel.app"
+                "http://localhost:5173",
+                "https://classmate3000-frontend.vercel.app"
         ));
 
         // Same methods you already allowed
