@@ -1,6 +1,6 @@
 package ca.gbc.comp3095.courseservice.repository;
 
-/*
+/* JAMES - 
 * No SQL yet
 * Uses Spring Data JPA abstraction
 * Microservice owns its data*

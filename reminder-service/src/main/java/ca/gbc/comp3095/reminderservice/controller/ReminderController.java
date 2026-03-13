@@ -1,49 +1,51 @@
 package ca.gbc.comp3095.reminderservice.controller;
 
-
 import ca.gbc.comp3095.reminderservice.dto.ReminderRequestDTO;
 import ca.gbc.comp3095.reminderservice.dto.ReminderResponseDTO;
 import ca.gbc.comp3095.reminderservice.service.ReminderService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 
 @RestController
 @RequestMapping("/api/v1/reminders")
 public class ReminderController {
 
-    @Autowired
-    private ReminderService service;
+    private final ReminderService service;
+
+    public ReminderController(ReminderService service) {
+        this.service = service;
+    }
 
     @PostMapping
-    public ReminderResponseDTO createReminder(@RequestBody ReminderRequestDTO request) {
+    public ReminderResponseDTO createReminder(@Valid @RequestBody ReminderRequestDTO request) {
         return service.createReminder(request);
     }
 
-    @GetMapping("/{id}")
-    public ReminderResponseDTO getReminderById(@PathVariable String id) {
-        return service.getReminderById(id);
+    @GetMapping("/{reminderId}")
+    public ReminderResponseDTO getReminderById(@PathVariable Long reminderId) {
+        return service.getReminderByReminderId(reminderId);
     }
 
-
     @GetMapping
-    public List<ReminderResponseDTO> getAllReminders(){
+    public List<ReminderResponseDTO> getAllReminders() {
         return service.getAllReminders();
     }
 
-    @PutMapping("/{id}")
-    public ReminderResponseDTO updateReminder(@PathVariable String id,
-                                              @RequestBody ReminderRequestDTO request) {
-        return service.updateReminder(id, request);
+    @GetMapping("/task/{taskId}")
+    public List<ReminderResponseDTO> getRemindersByTask(@PathVariable Long taskId) {
+        return service.getRemindersByTaskId(taskId);
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteReminder(@PathVariable String id) {
-        service.deleteReminder(id);
+    @PutMapping("/{reminderId}")
+    public ReminderResponseDTO updateReminder(@PathVariable Long reminderId,
+                                             @Valid @RequestBody ReminderRequestDTO request) {
+        return service.updateReminder(reminderId, request);
     }
 
-
-
+    @DeleteMapping("/{reminderId}")
+    public void deleteReminder(@PathVariable Long reminderId) {
+        service.deleteReminder(reminderId);
+    }
 }

@@ -1,10 +1,9 @@
 package ca.gbc.comp3095.taskservice.controller;
 
-
 import ca.gbc.comp3095.taskservice.dto.TaskRequestDTO;
 import ca.gbc.comp3095.taskservice.dto.TaskResponseDTO;
 import ca.gbc.comp3095.taskservice.service.TaskService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,17 +12,20 @@ import java.util.List;
 @RequestMapping("/api/v1/tasks")
 public class TaskController {
 
-    @Autowired
-    private TaskService service;
+    private final TaskService service;
+
+    public TaskController(TaskService service) {
+        this.service = service;
+    }
 
     @PostMapping
-    public TaskResponseDTO createTask(@RequestBody TaskRequestDTO request) {
+    public TaskResponseDTO createTask(@Valid @RequestBody TaskRequestDTO request) {
         return service.createTask(request);
     }
 
-    @GetMapping("/{id}")
-    public TaskResponseDTO getTaskById(@PathVariable String id) {
-        return service.getTaskById(id);
+    @GetMapping("/{taskId}")
+    public TaskResponseDTO getTaskByTaskId(@PathVariable Long taskId) {
+        return service.getTaskByTaskId(taskId);
     }
 
     @GetMapping
@@ -31,24 +33,26 @@ public class TaskController {
         return service.getAllTasks();
     }
 
-    @GetMapping("/completed/{status}")
-    public List<TaskResponseDTO> getTasksByCompletion(@PathVariable boolean status) {
-        return service.getTasksByCompletionStatus(status);
+    // tasks for a course
+    @GetMapping("/course/{courseId}")
+    public List<TaskResponseDTO> getTasksByCourse(@PathVariable Long courseId) {
+        return service.getTasksByCourse(courseId);
     }
 
-    @PutMapping("/{id}")
-    public TaskResponseDTO updateTask(@PathVariable String id,
-                                      @RequestBody TaskRequestDTO request) {
-        return service.updateTask(id, request);
+    // tasks for a course by completion
+    @GetMapping("/course/{courseId}/completed/{status}")
+    public List<TaskResponseDTO> getTasksByCourseAndCompletion(@PathVariable Long courseId, @PathVariable boolean status) {
+        return service.getTasksByCourseAndCompletion(courseId, status);
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteTask(@PathVariable String id){
-        service.deleteTask(id);
+    @PutMapping("/{taskId}")
+    public TaskResponseDTO updateTask(@PathVariable Long taskId,
+                                     @Valid @RequestBody TaskRequestDTO request) {
+        return service.updateTask(taskId, request);
     }
 
-
-
-
-
+    @DeleteMapping("/{taskId}")
+    public void deleteTask(@PathVariable Long taskId) {
+        service.deleteTask(taskId);
+    }
 }

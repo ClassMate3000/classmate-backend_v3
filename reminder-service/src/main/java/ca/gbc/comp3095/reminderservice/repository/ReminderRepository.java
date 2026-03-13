@@ -5,10 +5,16 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ReminderRepository extends MongoRepository<Reminder, String> {
 
-    List<Reminder> findByCourseId(Integer courseId);
-    List<Reminder> findByTaskId(Integer taskId);
+    Optional<Reminder> findByReminderId(Long reminderId);
+
+    boolean existsByReminderId(Long reminderId);
+
+    void deleteByReminderId(Long reminderId);
+
+    List<Reminder> findByTaskId(Long taskId);
 }

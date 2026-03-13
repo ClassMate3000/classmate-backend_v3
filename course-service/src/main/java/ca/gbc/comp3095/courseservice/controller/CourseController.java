@@ -1,6 +1,6 @@
 package ca.gbc.comp3095.courseservice.controller;
 
-/*
+/* JAMES - 
 * This ensures:
 *              - versioning baked in
 *              - correct status codes
@@ -39,11 +39,11 @@ public class CourseController {
         return ResponseEntity.ok("UP");
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<CourseResponseDTO> getCourseById(@PathVariable Long id){
-        return ResponseEntity.ok(courseService.getCourseById(id));
+    // PENNY - updated id - courseId
+    @GetMapping("/{courseId}")
+    public ResponseEntity<CourseResponseDTO> getCourseById(@PathVariable Long courseId){
+        return ResponseEntity.ok(courseService.getCourseById(courseId));
     }
-
 
     @PostMapping
     public ResponseEntity<CourseResponseDTO> createCourse(@Valid @RequestBody CourseRequestDTO dto){
@@ -52,20 +52,22 @@ public class CourseController {
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    // -- New endpoint: updateCourse() = update -- //
-    @PutMapping("/{id}")
+    // JAMES -- New endpoint: updateCourse() = update -- //
+    // PENNY - updated id - courseId
+    @PutMapping("/{courseId}")
     public ResponseEntity<CourseResponseDTO> updateCourse(
-            @PathVariable Long id,
+            @PathVariable Long courseId,
             @Valid @RequestBody CourseRequestDTO dto){
-        CourseResponseDTO updated = courseService.updateCourse(id, dto);
+        CourseResponseDTO updated = courseService.updateCourse(courseId, dto);
         return ResponseEntity.ok(updated);
     }
-
-    // -- New endpoint: deleteCourse() = delete -- //
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCourse(@PathVariable Long id){
-        courseService.deleteCourse(id);
-        return ResponseEntity.noContent().build();   // 204 No Content
+    
+    // JAMES -- New endpoint: deleteCourse() = delete -- //
+    // PENNY - updated id - courseId
+    @DeleteMapping("/{courseId}")
+    public ResponseEntity<Void> deleteCourse(@PathVariable Long courseId){
+        courseService.deleteCourse(courseId);
+        return ResponseEntity.noContent().build();    // JAMES - 204 No Content
     }
 }
 

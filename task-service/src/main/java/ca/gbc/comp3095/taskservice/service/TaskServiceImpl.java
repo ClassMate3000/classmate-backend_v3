@@ -1,80 +1,119 @@
 package ca.gbc.comp3095.taskservice.service;
 
-
-import ca.gbc.comp3095.taskservice.dto.TaskResponseDTO;
 import ca.gbc.comp3095.taskservice.dto.TaskRequestDTO;
+import ca.gbc.comp3095.taskservice.dto.TaskResponseDTO;
 import ca.gbc.comp3095.taskservice.exception.TaskNotFoundException;
 import ca.gbc.comp3095.taskservice.model.Task;
 import ca.gbc.comp3095.taskservice.repository.TaskRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class TaskServiceImpl implements TaskService {
 
-    @Autowired
-    private TaskRepository repository;
+    private static final String TASK_SEQ = "task_sequence";
 
-    @Override
-    public TaskResponseDTO createTask(TaskRequestDTO request){
-        Task task = new Task(request.getTitle(), request.getDescription(), request.isCompleted());
-        Task saved = repository.save(task);
-        return mapToResponse(saved);
+    private final TaskRepository repository;
+    private final SequenceGeneratorService sequenceGenerator;
+
+    public TaskServiceImpl(TaskRepository repository, SequenceGeneratorService sequenceGenerator) {
+        this.repository = repository;
+        this.sequenceGenerator = sequenceGenerator;
     }
 
     @Override
-    public TaskResponseDTO getTaskById(String id){
-        Task task = repository.findById(id)
-                .orElseThrow(() -> new TaskNotFoundException("Task not found with id: " + id));
-        return mapToResponse(task);
-    }
+    public TaskResponseDTO createTask(TaskRequestDTO request) {
+        Task task = new Task();
+        task.setTaskId(sequenceGenerator.getNextSequence(TASK_SEQ));
 
-    @Override
-    public List<TaskResponseDTO> getAllTasks(){
-        return repository.findAll()
-                .stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public TaskResponseDTO updateTask(String id, TaskRequestDTO request){
-        Task task = repository.findById(id)
-                .orElseThrow(() -> new TaskNotFoundException("Task not found with id: " + id));
-
+        task.setCourseId(request.getCourseId());
         task.setTitle(request.getTitle());
-        task.setDescription(request.getDescription());
+        task.setType(request.getType());
+        task.setDueDate(request.getDueDate());
+
         task.setCompleted(request.isCompleted());
+        task.setBonus(request.isBonus());
+        task.setPriority(request.isPriority());
 
-        Task updated = repository.save(task);
-        return mapToResponse(updated);
+        task.setPriorityThresholdDays(request.getPriorityThresholdDays());
+        task.setManualPriorityOverride(request.isManualPriorityOverride());
+
+        task.setWeight(request.getWeight());
+        task.setScorePercent(request.getScorePercent());
+
+        Task saved = repository.save(task);
+        return toResponse(saved);
     }
 
     @Override
-    public void deleteTask(String id){
-        if(!repository.existsById(id)){
-            throw new TaskNotFoundException("Task not found with id: " + id);
+    public TaskResponseDTO getTaskByTaskId(Long taskId) {
+        Task task = repository.findByTaskId(taskId)
+                .orElseThrow(() -> new TaskNotFoundException("Task not found with taskId: " + taskId));
+        return toResponse(task);
+    }
+
+    @Override
+    public List<TaskResponseDTO> getAllTasks() {
+        return repository.findAll().stream().map(this::toResponse).toList();
+    }
+
+    @Override
+    public TaskResponseDTO updateTask(Long taskId, TaskRequestDTO request) {
+        Task task = repository.findByTaskId(taskId)
+                .orElseThrow(() -> new TaskNotFoundException("Task not found with taskId: " + taskId));
+
+        task.setCourseId(request.getCourseId());
+        task.setTitle(request.getTitle());
+        task.setType(request.getType());
+        task.setDueDate(request.getDueDate());
+
+        task.setCompleted(request.isCompleted());
+        task.setBonus(request.isBonus());
+        task.setPriority(request.isPriority());
+
+        task.setPriorityThresholdDays(request.getPriorityThresholdDays());
+        task.setManualPriorityOverride(request.isManualPriorityOverride());
+
+        task.setWeight(request.getWeight());
+        task.setScorePercent(request.getScorePercent());
+
+        Task saved = repository.save(task);
+        return toResponse(saved);
+    }
+
+    @Override
+    public void deleteTask(Long taskId) {
+        if (!repository.existsByTaskId(taskId)) {
+            throw new TaskNotFoundException("Task not found with taskId: " + taskId);
         }
-        repository.deleteById(id);
+        repository.deleteByTaskId(taskId);
     }
 
     @Override
-    public List<TaskResponseDTO> getTasksByCompletionStatus(boolean completed){
-        return repository.findByCompleted(completed)
-                .stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+    public List<TaskResponseDTO> getTasksByCourse(Long courseId) {
+        return repository.findByCourseId(courseId).stream().map(this::toResponse).toList();
     }
 
-    private TaskResponseDTO mapToResponse(Task task){
+    @Override
+    public List<TaskResponseDTO> getTasksByCourseAndCompletion(Long courseId, boolean completed) {
+        return repository.findByCourseIdAndIsCompleted(courseId, completed).stream().map(this::toResponse).toList();
+    }
+
+    private TaskResponseDTO toResponse(Task task) {
         return new TaskResponseDTO(
-                task.getId(),
+                task.getTaskId(),
+                task.getCourseId(),
                 task.getTitle(),
-                task.getDescription(),
-                task.isCompleted()
+                task.getType(),
+                task.getDueDate(),
+                task.isCompleted(),
+                task.isBonus(),
+                task.isPriority(),
+                task.getPriorityThresholdDays(),
+                task.isManualPriorityOverride(),
+                task.getWeight(),
+                task.getScorePercent()
         );
     }
 }

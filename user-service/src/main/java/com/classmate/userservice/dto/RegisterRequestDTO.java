@@ -1,6 +1,3 @@
 package com.classmate.userservice.dto;
 
-public record RegisterRequestDTO(String email, String password) { }
-
-
-
+public record RegisterRequestDTO(String firstName, String lastName, String email, String password) { }

@@ -6,63 +6,35 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
+
 @Document(collection = "task")
-@Data
+@Data // PENNY -  when using this should not have manual getters/setters/constructors
 @NoArgsConstructor
 @AllArgsConstructor
 public class Task {
 
     @Id
-    private String id;
+    private String id; // Mongo internal ID
+
+    // UML-required ID
+    private Long taskId;
 
     private String title;
-    private String description;
-    private boolean completed;
+    private TaskType type;
 
-    //Constructors
-    public Task(String title, String description, boolean completed) {
-        this.title = title;
-        this.description = description;
-        this.completed = completed;
-    }
+    private LocalDateTime dueDate;
 
+    private boolean isCompleted;
+    private boolean isBonus;
+    private boolean isPriority;
 
-    public Task(String title, String description) {
-        this.title = title;
-        this.description = description;
-        this.completed = false;
-    }
+    private int priorityThresholdDays;
+    private boolean manualPriorityOverride;
 
+    private double weight;
+    private double scorePercent;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public boolean isCompleted() {
-        return completed;
-    }
-
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
-    }
+    // Microservice reference (important)
+    private Long courseId;
 }

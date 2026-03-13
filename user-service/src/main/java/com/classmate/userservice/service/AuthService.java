@@ -13,11 +13,14 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     public AuthService(UserRepository userRepository,
-                       PasswordEncoder passwordEncoder) {
+                       PasswordEncoder passwordEncoder,
+                       JwtService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     public AuthResponseDTO register(RegisterRequestDTO request) {
@@ -27,11 +30,15 @@ public class AuthService {
         }
 
         User user = new User();
+        user.setFirstName(request.firstName());
+        user.setLastName(request.lastName());
         user.setEmail(request.email());
         user.setPassword(passwordEncoder.encode(request.password()));
-        userRepository.save(user);
 
-        return new AuthResponseDTO(null);
+        User saved = userRepository.save(user);
+
+        String token = jwtService.generateToken(saved.getEmail());
+        return new AuthResponseDTO(saved.getUserId(), token);
     }
 
     public AuthResponseDTO login(LoginRequestDTO request) {
@@ -43,6 +50,7 @@ public class AuthService {
             throw new RuntimeException("invalid credentials");
         }
 
-        return new AuthResponseDTO(null);
+        String token = jwtService.generateToken(user.getEmail());
+        return new AuthResponseDTO(user.getUserId(), token);
     }
 }

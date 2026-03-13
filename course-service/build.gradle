@@ -20,6 +20,12 @@ repositories {
 
 dependencies {
 
+	// PENNY - Added these to setup migrations to minimize potential setup difficulties
+	// Flyway DB migrations (recommended for reliable setup)
+	implementation 'org.flywaydb:flyway-core'
+	implementation 'org.flywaydb:flyway-database-postgresql'
+
+
 	// REST APIs
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 
@@ -32,6 +38,7 @@ dependencies {
 	// PostgreSQL (needed Day 3, safe now)
 	runtimeOnly 'org.postgresql:postgresql'
 
+	// PENNY - Ideally remove this - integration test for Postgres using Testcontainers
 	// Add H2 dependency
 	runtimeOnly 'com.h2database:h2'
 
@@ -47,7 +54,8 @@ dependencies {
 
 
 	// OpenAPI / Swagger
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.0'
+
 
 	// SECURITY (REQUIRED to override defaults)
 	implementation 'org.springframework.boot:spring-boot-starter-security'

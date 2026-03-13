@@ -6,16 +6,9 @@ import ca.gbc.comp3095.courseservice.dto.CourseResponseDTO;
 import java.util.List;
 
 public interface CourseService {
-
     List<CourseResponseDTO> getAllCourses();
-
     CourseResponseDTO getCourseById(Long id);
-
-    CourseResponseDTO createCourse(CourseRequestDTO courseRequestDTO);
-
-    // -- New methods for PUT / DELETE --- //
-    CourseResponseDTO updateCourse(Long id, CourseRequestDTO courseRequestDTO);
-
+    CourseResponseDTO createCourse(CourseRequestDTO dto);
+    CourseResponseDTO updateCourse(Long id, CourseRequestDTO dto);
     void deleteCourse(Long id);
-
 }

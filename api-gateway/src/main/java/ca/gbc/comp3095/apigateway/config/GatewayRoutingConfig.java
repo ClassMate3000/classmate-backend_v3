@@ -13,27 +13,52 @@ public class GatewayRoutingConfig {
         return builder.routes()
                 // Course Service
                 .route("course-service", r -> r.path("/api/v1/courses/**")
-                        .filters(f -> f.stripPrefix(3)) // <-- FIX
-                        .uri("http://host.docker.internal:8080"))
+                        // PENNY // .filters(f -> f.stripPrefix(3)) // JAMES - <-- FIX
+                        .uri("http://course-service:8080")) // PENNY - used docker dns name instead of host.docker.internal
 
-                // Grade Service
-                .route("grade-service", r -> r.path("/api/v1/grades/**")
-                        .filters(f -> f.stripPrefix(3)) // <-- FIX
-                        .uri("http://grade-service:8081"))
+                // CourseProgress Service
+                .route("courseprogress-service", r -> r.path("/api/v1/course-progress/**")
+                        // PENNY // .filters(f -> f.stripPrefix(3)) // JAMES - <-- FIX
+                        .uri("http://courseprogress-service:8081"))  // PENNY - used docker dns name instead of host.docker.internal
 
                 // Reminder Service
                 .route("reminder-service", r -> r.path("/api/v1/reminders/**")
-                        .filters(f -> f.stripPrefix(3)) // <-- FIX
-                        .uri("http://reminder-service:8082"))
-
+                        // PENNY // .filters(f -> f.stripPrefix(3)) // JAMES - <-- FIX
+                        .uri("http://reminder-service:8082"))  // PENNY - used docker dns name instead of host.docker.internal
+ 
                 // Task Service
                 .route("task-service", r -> r.path("/api/v1/tasks/**")
-                        .filters(f -> f.stripPrefix(3)) // <-- FIX
+                        // PENNY // .filters(f -> f.stripPrefix(3)) // JAMES - <-- FIX
+                        .uri("http://task-service:8083"))  // PENNY - used docker dns name instead of host.docker.internal
+
+                // PENNY - User Auth endpoints
+                .route("user-service-auth", r -> r.path("/api/v1/auth/**")
+                        .uri("http://user-service:8089"))
+
+                // PENNY - Optional: protected demo endpoint (yours is /api/protected/**)
+                .route("user-service-protected", r -> r.path("/api/protected/**")
+                        .uri("http://user-service:8089")) // PENNY - used docker dns name instead of host.docker.internal
+                
+                // PENNY - 
+                // ---- Swagger docs passthrough ----
+                .route("course-service-docs", r -> r.path("/course-service/v3/api-docs/**")
+                        .filters(f -> f.stripPrefix(1))
+                        .uri("http://course-service:8080"))
+
+                .route("courseprogress-service-docs", r -> r.path("/courseprogress-service/v3/api-docs/**")
+                        .filters(f -> f.stripPrefix(1))
+                        .uri("http://courseprogress-service:8081"))
+
+                .route("task-service-docs", r -> r.path("/task-service/v3/api-docs/**")
+                        .filters(f -> f.stripPrefix(1))
                         .uri("http://task-service:8083"))
 
-                // User Service
-                .route("user-service", r -> r.path("/api/v1/users/**")
-                        .filters(f -> f.stripPrefix(3)) // <-- FIX
+                .route("reminder-service-docs", r -> r.path("/reminder-service/v3/api-docs/**")
+                        .filters(f -> f.stripPrefix(1))
+                        .uri("http://reminder-service:8082"))
+
+                .route("user-service-docs", r -> r.path("/user-service/v3/api-docs/**")
+                        .filters(f -> f.stripPrefix(1))
                         .uri("http://user-service:8089"))
 
                 .build();
