@@ -2,6 +2,7 @@ package ca.gbc.comp3095.apigateway.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
@@ -14,8 +15,12 @@ public class SecurityConfig {
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
-                .cors(cors -> {})
+                .cors(cors -> {}) // uses CorsConfig
                 .authorizeExchange(exchanges -> exchanges
+
+                        // Nez: allow preflight requests
+                        .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
                         .pathMatchers(
                                 "/api/auth/**",
                                 "/api/v1/auth/**",
@@ -32,9 +37,9 @@ public class SecurityConfig {
                                 // Proxied OpenAPI from services (aggregation)
                                 "/*/v3/api-docs/**",
 
-                                // Any other public endpoints you want
                                 "/api/v1/courses/health"
                         ).permitAll()
+
                         .anyExchange().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt())
