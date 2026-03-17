@@ -15,34 +15,28 @@ public class SecurityConfig {
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
-                .cors(cors -> {}) // uses CorsConfig
+                .cors(cors -> {}) // Nez: Use the CORS rules defined in CorsConfig.
                 .authorizeExchange(exchanges -> exchanges
-
-                        // Nez: allow preflight requests
+                        //Allow browser preflight requests so CORS checks can complete before the real request.
                         .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
+                        // Keep auth and public documentation endpoints accessible without a JWT.
                         .pathMatchers(
                                 "/api/auth/**",
                                 "/api/v1/auth/**",
                                 "/actuator/**",
-
-                                // Swagger UI
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
                                 "/webjars/**",
-
-                                // Gateway’s own OpenAPI
                                 "/v3/api-docs/**",
-
-                                // Proxied OpenAPI from services (aggregation)
                                 "/*/v3/api-docs/**",
-
                                 "/api/v1/courses/health"
                         ).permitAll()
 
+                        //Require authentication for all remaining routes.
                         .anyExchange().authenticated()
                 )
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt())
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt()) //Validate JWT access tokens at the gateway level.
                 .build();
     }
 }
