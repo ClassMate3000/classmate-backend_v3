@@ -6,7 +6,6 @@ public class GradeControllerTest {
 
     @Test
     void contextLoads() {
-        // simple test to verify Spring context starts
+        // Placeholder — full controller tests to be added when GradeController is implemented.
     }
-
 }

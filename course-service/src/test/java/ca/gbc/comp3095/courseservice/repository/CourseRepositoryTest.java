@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,16 +22,23 @@ class CourseRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        // Create a reusable Course instance for tests
-        course = new Course("COMP3095", "Microservices", "Spring Boot");
+        // Updated to match current Course constructor — description removed.
+        course = new Course(
+                "COMP3095",
+                "Microservices",
+                "Prof. GBC",
+                List.of(),
+                85,
+                LocalDate.of(2026, 2, 10)
+        );
     }
 
     @Test
     void shouldSaveCourse() {
         Course saved = courseRepository.save(course);
 
-        // Verify that ID is generated and course is saved
-        assertThat(saved.getId()).isNotNull();
+        // courseId is the correct field name — getId() was removed.
+        assertThat(saved.getCourseId()).isNotNull();
         assertThat(saved.getCode()).isEqualTo("COMP3095");
     }
 
@@ -37,7 +46,7 @@ class CourseRepositoryTest {
     void shouldFindCourseById() {
         Course saved = courseRepository.save(course);
 
-        Optional<Course> found = courseRepository.findById(saved.getId());
+        Optional<Course> found = courseRepository.findById(saved.getCourseId());
 
         assertThat(found).isPresent();
         assertThat(found.get().getTitle()).isEqualTo("Microservices");
@@ -47,7 +56,7 @@ class CourseRepositoryTest {
     void shouldFindAllCourses() {
         courseRepository.save(course);
 
-        var courses = courseRepository.findAll();
+        List<Course> courses = courseRepository.findAll();
 
         assertThat(courses).isNotEmpty();
         assertThat(courses.get(0).getCode()).isEqualTo("COMP3095");
@@ -57,13 +66,13 @@ class CourseRepositoryTest {
     void shouldUpdateCourse() {
         Course saved = courseRepository.save(course);
 
-        // Update course details
+        // description field was removed — updating title and instructor instead.
         saved.setTitle("Advanced Microservices");
-        saved.setDescription("Spring Boot + Spring Cloud");
+        saved.setInstructor("Prof. Updated");
         Course updated = courseRepository.save(saved);
 
         assertThat(updated.getTitle()).isEqualTo("Advanced Microservices");
-        assertThat(updated.getDescription()).isEqualTo("Spring Boot + Spring Cloud");
+        assertThat(updated.getInstructor()).isEqualTo("Prof. Updated");
     }
 
     @Test
@@ -72,7 +81,7 @@ class CourseRepositoryTest {
 
         courseRepository.delete(saved);
 
-        Optional<Course> deleted = courseRepository.findById(saved.getId());
+        Optional<Course> deleted = courseRepository.findById(saved.getCourseId());
         assertThat(deleted).isNotPresent();
     }
 }

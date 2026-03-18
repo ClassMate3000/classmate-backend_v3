@@ -6,7 +6,6 @@ public class GradeServiceTest {
 
     @Test
     void contextLoads() {
-        // simple test to verify Spring context starts
+        // Placeholder — full service tests to be added when GradeService is implemented.
     }
-
 }

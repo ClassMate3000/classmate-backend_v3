@@ -13,6 +13,9 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import ca.gbc.comp3095.courseservice.repository.CourseRepository;
 import ca.gbc.comp3095.courseservice.model.Course;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -24,7 +27,6 @@ public class CourseIntegrationTest {
             .withDatabaseName("testdb")
             .withUsername("testuser")
             .withPassword("testpass");
-
 
     @DynamicPropertySource
     static void setProperties(DynamicPropertyRegistry registry) {
@@ -38,7 +40,17 @@ public class CourseIntegrationTest {
 
     @Test
     void testPostgresRepository() {
-        courseRepository.save(new Course("C101", "Test Course", "This is a test course"));
+        // Updated to match current Course constructor — description field was removed by Penny (UML update).
+        Course course = new Course(
+                "C101",
+                "Test Course",
+                "Prof. Test",
+                List.of(),
+                80,
+                LocalDate.of(2026, 2, 10)
+        );
+
+        courseRepository.save(course);
         assertThat(courseRepository.findAll()).isNotEmpty();
     }
 }

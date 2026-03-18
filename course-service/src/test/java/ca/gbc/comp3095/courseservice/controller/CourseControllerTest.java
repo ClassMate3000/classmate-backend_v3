@@ -1,6 +1,5 @@
 package ca.gbc.comp3095.courseservice.controller;
 
-import ca.gbc.comp3095.courseservice.controller.CourseController;
 import ca.gbc.comp3095.courseservice.dto.CourseResponseDTO;
 import ca.gbc.comp3095.courseservice.service.CourseService;
 import org.junit.jupiter.api.Test;
@@ -11,6 +10,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -28,8 +28,17 @@ class CourseControllerTest {
     @Test
     void shouldReturnAllCourses() throws Exception {
 
+        // Build a mock response that matches the current CourseResponseDTO constructor.
         List<CourseResponseDTO> mockCourses = List.of(
-                new CourseResponseDTO(1L, "COMP3095", "Microservices", "Spring Boot course")
+                new CourseResponseDTO(
+                        1L,
+                        "COMP3095",
+                        "Capstone Project I",
+                        "Prof. GBC",
+                        List.of(),
+                        85,
+                        LocalDate.of(2026, 2, 10)
+                )
         );
 
         Mockito.when(courseService.getAllCourses()).thenReturn(mockCourses);

@@ -1,7 +1,7 @@
 package ca.gbc.comp3095.gradeservice.integration;
 
-import ca.gbc.comp3095.gradeservice.model.Grade;
-import ca.gbc.comp3095.gradeservice.repository.GradeRepository;
+import ca.gbc.comp3095.courseprogressservice.model.CourseProgress;
+import ca.gbc.comp3095.courseprogressservice.repository.CourseProgressRepository;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +12,9 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -34,21 +37,25 @@ class GradeIntegrationTest {
     }
 
     @Autowired
-    private GradeRepository gradeRepository;
+    private CourseProgressRepository courseProgressRepository;
 
     @Test
-    void shouldPersistAndLoadGrade() {
-        Grade grade = new Grade(
-                "C101",
-                "Intro to Testing",
-                "Exam",
-                92.5,
-                0.4,
-                "Excellent"
+    void shouldPersistAndLoadCourseProgress() {
+        // Updated to use CourseProgress — Grade class and GradeRepository do not exist.
+        CourseProgress progress = new CourseProgress(
+                1L,         // courseId
+                20.0,       // accumulatedPercentPoints
+                5.0,        // usedPercentPoints
+                0.0,        // lostPercentPoints
+                100.0,      // maxPossiblePercent
+                85.0,       // currentGradePercent
+                true,       // canMeetGoal
+                LocalDate.of(2026, 2, 10),          // weekOf
+                LocalDateTime.of(2026, 2, 10, 12, 0) // computedAt
         );
 
-        gradeRepository.save(grade);
+        courseProgressRepository.save(progress);
 
-        assertThat(gradeRepository.findAll()).hasSize(1);
+        assertThat(courseProgressRepository.findAll()).hasSize(1);
     }
 }
