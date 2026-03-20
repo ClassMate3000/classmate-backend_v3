@@ -54,8 +54,8 @@ public class GatewayRoutingConfig {
 
                 .route("courseprogress-service-docs", r -> r.path("/courseprogress-service/v3/api-docs/**")
                         .filters(f -> f.stripPrefix(1))
-                        .uri("https://classmate3000-courseprogress-service.onrender.com"))  // Update URL for Render deployment
-                        // .uri("http://courseprogress-service:8081"))
+                        // .uri("https://classmate3000-courseprogress-service.onrender.com"))  // Update URL for Render deployment
+                        .uri("http://courseprogress-service:8081"))
 
                 .route("task-service-docs", r -> r.path("/task-service/v3/api-docs/**")
                         .filters(f -> f.stripPrefix(1))
