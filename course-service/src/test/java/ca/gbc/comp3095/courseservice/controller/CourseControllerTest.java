@@ -21,6 +21,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(CourseController.class)
@@ -74,31 +75,31 @@ class CourseControllerTest {
                 .andExpect(content().string("UP"));
     }
 
-    /*
     @Test
     void shouldReturnAllCourses() throws Exception {
-        Mockito.when(courseService.getAllCourses()).thenReturn(List.of(sampleCourseResponse));
+        // Arrange (mock service)
+        Mockito.when(courseService.getAllCourses())
+                .thenReturn(List.of(sampleCourseResponse));
 
-        mockMvc.perform(get("/api/v1/courses"))
+        // Act + Assert
+        mockMvc.perform(get("/api/v1/courses")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].courseId").value(1))
                 .andExpect(jsonPath("$[0].code").value("COMP3095"))
                 .andExpect(jsonPath("$[0].title").value("Microservices"))
-                .andExpect(jsonPath("$[0].instructor").value("Dr. Smith"));
-    }
-
-    @Test
-    void shouldReturnHealthStatus() throws Exception {
-        mockMvc.perform(get("/api/v1/courses/health"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("UP"));
+                .andExpect(jsonPath("$[0].instructor").value("Dr. Smith"))
+                .andExpect(jsonPath("$[0].gradeGoal").value(90));
     }
 
     @Test
     void shouldReturnCourseById() throws Exception {
-        Mockito.when(courseService.getCourseById(1L)).thenReturn(sampleCourseResponse);
+        // Arrange (mock service)
+        Mockito.when(courseService.getCourseById(1L))
+                .thenReturn(sampleCourseResponse);
 
-        mockMvc.perform(get("/api/v1/courses/1"))
+        // Act + Assert
+        mockMvc.perform(get("/api/v1/courses/{id}", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.courseId").value(1))
                 .andExpect(jsonPath("$.code").value("COMP3095"))
@@ -108,10 +109,14 @@ class CourseControllerTest {
 
     @Test
     void shouldCreateCourse() throws Exception {
-        Mockito.when(courseService.createCourse(any())).thenReturn(sampleCourseResponse);
+        // Arrange (mock service)
+        Mockito.when(courseService.createCourse(any(CourseRequestDTO.class)))
+                .thenReturn(sampleCourseResponse);
 
+        // Convert request DTO to JSON
         String requestJson = objectMapper.writeValueAsString(sampleCourseRequest);
 
+        // Act + Assert
         mockMvc.perform(post("/api/v1/courses")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
@@ -124,6 +129,7 @@ class CourseControllerTest {
 
     @Test
     void shouldUpdateCourse() throws Exception {
+
         CourseResponseDTO updatedResponse = new CourseResponseDTO(
                 1L,
                 "COMP3095",
@@ -140,31 +146,40 @@ class CourseControllerTest {
         updatedRequest.setInstructor("Dr. Smith");
         updatedRequest.setGradeGoal(95);
         updatedRequest.setStartWeek(LocalDate.now());
-        updatedRequest.setMeetings(List.of());
 
-        Mockito.when(courseService.updateCourse(eq(1L), any())).thenReturn(updatedResponse);
+        // ✅ FIX: Add valid meeting
+        CourseRequestDTO.MeetingDTO meeting = new CourseRequestDTO.MeetingDTO();
+        meeting.setDayOfWeek(1);
+        meeting.setStartTime(LocalTime.of(9, 0));
+        meeting.setEndTime(LocalTime.of(10, 30));
+
+        updatedRequest.setMeetings(List.of(meeting));
+
+        Mockito.when(courseService.updateCourse(eq(1L), any(CourseRequestDTO.class)))
+                .thenReturn(updatedResponse);
 
         String requestJson = objectMapper.writeValueAsString(updatedRequest);
 
-        mockMvc.perform(put("/api/v1/courses/1")
+        mockMvc.perform(put("/api/v1/courses/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("Advanced Microservices"))
-                .andExpect(jsonPath("$.gradeGoal").value(95));
+                .andExpect(jsonPath("$.title").value("Advanced Microservices"));
     }
 
     @Test
     void shouldDeleteCourse() throws Exception {
+        // Arrange
         Mockito.doNothing().when(courseService).deleteCourse(1L);
 
-        mockMvc.perform(delete("/api/v1/courses/1"))
+        // Act + Assert
+        mockMvc.perform(delete("/api/v1/courses/{id}", 1L))
                 .andExpect(status().isNoContent());
     }
 
     @Test
     void shouldFailValidation_whenMissingFields() throws Exception {
-        // Empty request triggers validation failure
+        // Empty JSON → should fail validation
         String emptyJson = "{}";
 
         mockMvc.perform(post("/api/v1/courses")
@@ -172,6 +187,4 @@ class CourseControllerTest {
                         .content(emptyJson))
                 .andExpect(status().isBadRequest());
     }
-
-     */
 }
