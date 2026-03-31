@@ -1,20 +1,30 @@
 package ca.gbc.comp3095.courseservice.repository;
 
 import ca.gbc.comp3095.courseservice.model.Course;
+import ca.gbc.comp3095.courseservice.model.CourseMeeting;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/*
-@org.junit.jupiter.api.Disabled("Outdated after Course model update")
 @DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
+@TestPropertySource(properties = {
+        "spring.flyway.enabled=false",
+        "spring.jpa.hibernate.ddl-auto=create-drop",
+        "spring.jpa.properties.hibernate.default_schema=PUBLIC",
+        "spring.jpa.show-sql=true"
+})
 class CourseRepositoryTest {
 
     @Autowired
@@ -24,14 +34,15 @@ class CourseRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        // Updated to match current Course constructor — description removed.
+        courseRepository.deleteAll();
+
         course = new Course(
                 "COMP3095",
                 "Microservices",
-                "Prof. GBC",
-                List.of(),
+                "Spring Boot",
+                new ArrayList<>(List.of(new CourseMeeting(1, LocalTime.of(9,0), LocalTime.of(10,0)))), // mutable
                 85,
-                LocalDate.of(2026, 2, 10)
+                LocalDate.now()
         );
     }
 
@@ -39,9 +50,13 @@ class CourseRepositoryTest {
     void shouldSaveCourse() {
         Course saved = courseRepository.save(course);
 
-        // courseId is the correct field name — getId() was removed.
         assertThat(saved.getCourseId()).isNotNull();
         assertThat(saved.getCode()).isEqualTo("COMP3095");
+        assertThat(saved.getTitle()).isEqualTo("Microservices");
+        assertThat(saved.getInstructor()).isEqualTo("Spring Boot");
+        assertThat(saved.getMeetings()).hasSize(1);
+        assertThat(saved.getGradeGoal()).isEqualTo(85);
+        assertThat(saved.getStartWeek()).isEqualTo(course.getStartWeek());
     }
 
     @Test
@@ -58,24 +73,25 @@ class CourseRepositoryTest {
     void shouldFindAllCourses() {
         courseRepository.save(course);
 
-        List<Course> courses = courseRepository.findAll();
+        var courses = courseRepository.findAll();
 
-        assertThat(courses).isNotEmpty();
+        assertThat(courses).hasSize(1);
         assertThat(courses.get(0).getCode()).isEqualTo("COMP3095");
     }
+
 
     @Test
     void shouldUpdateCourse() {
         Course saved = courseRepository.save(course);
 
-        // description field was removed — updating title and instructor instead.
         saved.setTitle("Advanced Microservices");
-        saved.setInstructor("Prof. Updated");
+        saved.setGradeGoal(90);
         Course updated = courseRepository.save(saved);
 
         assertThat(updated.getTitle()).isEqualTo("Advanced Microservices");
-        assertThat(updated.getInstructor()).isEqualTo("Prof. Updated");
+        assertThat(updated.getGradeGoal()).isEqualTo(90);
     }
+
 
     @Test
     void shouldDeleteCourse() {
@@ -87,4 +103,3 @@ class CourseRepositoryTest {
         assertThat(deleted).isNotPresent();
     }
 }
- */
