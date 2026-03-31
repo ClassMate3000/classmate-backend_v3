@@ -56,6 +56,10 @@ dependencies {
 	// SECURITY (REQUIRED to override defaults)
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 
+
+	// Essential when using MockMvc and .with(csrf()) in the tests
+	testImplementation 'org.springframework.security:spring-security-test'
+
 }
 
 tasks.named('test') {
