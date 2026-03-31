@@ -1,10 +1,10 @@
-package ca.gbc.comp3095.gradeservice;
+package ca.gbc.comp3095.courseprogressservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class GradeServiceApplicationTests {
+class CourseProgressServiceApplicationTests {
 
 	@Test
 	void contextLoads() {

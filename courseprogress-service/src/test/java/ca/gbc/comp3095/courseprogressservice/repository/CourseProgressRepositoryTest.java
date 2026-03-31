@@ -1,8 +1,9 @@
-package ca.gbc.comp3095.gradeservice.repository;
+package ca.gbc.comp3095.courseprogressservice.repository;
 
+/*
 import org.junit.jupiter.api.Test;
 
-public class GradeRepositoryTest {
+public class CourseProgressRepositoryTest {
 
     @Test
     void contextLoads() {
@@ -10,3 +11,4 @@ public class GradeRepositoryTest {
     }
 
 }
+*/
