@@ -1,6 +1,5 @@
 package ca.gbc.comp3095.reminderservice.integration;
 
-/*
 import ca.gbc.comp3095.reminderservice.model.Reminder;
 import ca.gbc.comp3095.reminderservice.repository.ReminderRepository;
 
@@ -37,21 +36,20 @@ class ReminderIntegrationTest {
 
     @Test
     void shouldPersistAndLoadReminder() {
+
+        // Given
         Reminder reminder = new Reminder(
-                "Midterm Reminder",
-                "Study",
-                "C101",
-                "HIGH",
-                "2026-01-10",
-                "09:00",
-                "Don’t forget notes",
-                1,
-                1
+                1L,
+                101L,
+                "Integration Test Reminder",
+                java.time.LocalDateTime.now(),
+                false
         );
 
+        // When
         reminderRepository.save(reminder);
 
+        // Then
         assertThat(reminderRepository.findAll()).hasSize(1);
     }
 }
-*/
