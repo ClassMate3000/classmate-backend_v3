@@ -26,4 +26,12 @@ public class Reminder {
     private LocalDateTime scheduledAt;
 
     private boolean wasSent;
+
+    public Reminder(Long reminderId, Long taskId, String message, LocalDateTime scheduledAt, boolean wasSent) {
+        this.reminderId = reminderId;
+        this.taskId = taskId;
+        this.message = message;
+        this.scheduledAt = scheduledAt;
+        this.wasSent = wasSent;
+    }
 }
