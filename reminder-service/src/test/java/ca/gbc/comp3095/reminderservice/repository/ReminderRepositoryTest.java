@@ -48,7 +48,6 @@ class ReminderRepositoryTest {
         assertThat(found).isPresent();
         assertThat(found.get().getMessage()).isEqualTo("Finish assignment");
     }
-    /*
 
     @Test
     @DisplayName("Test findAll returns all reminders")
@@ -69,5 +68,5 @@ class ReminderRepositoryTest {
         assertThat(reminderOpt).isEmpty();
     }
 
-     */
+
 }
