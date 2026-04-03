@@ -35,9 +35,6 @@ public class AuthControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    // =========================
-    // TEST: REGISTER SUCCESS
-    // =========================
     @Test
     void testRegisterSuccess() throws Exception {
 
@@ -59,9 +56,6 @@ public class AuthControllerTest {
                 .andExpect(jsonPath("$.token").value("mock-jwt-token"));
     }
 
-    // =========================
-    // TEST: LOGIN SUCCESS
-    // =========================
     @Test
     void testLoginSuccess() throws Exception {
 

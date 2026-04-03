@@ -20,8 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-@ActiveProfiles("test") // Use test profile
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY) // forces H2 in-memory DB for debug
+@ActiveProfiles("test")
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY) // forces H2 in-memory DB
 class CourseProgressServiceTest {
 
     private CourseProgressRepository repository;
@@ -35,9 +35,6 @@ class CourseProgressServiceTest {
     }
 
 
-    // -------------------------------
-    // Test getAllProgress()
-    // -------------------------------
     @Test
     void testGetAllProgress() {
         // Prepare mock data
@@ -56,9 +53,7 @@ class CourseProgressServiceTest {
         verify(repository, times(1)).findAll();
     }
 
-    // -------------------------------
-    // Test getProgressById() - Found
-    // -------------------------------
+
     @Test
     void testGetProgressById_Found() {
         CourseProgress progress = new CourseProgress(101L, 80.0, 70.0, 10.0, 100.0, 80.0,
@@ -71,9 +66,7 @@ class CourseProgressServiceTest {
         verify(repository).findById(1L);
     }
 
-    // -------------------------------
-    // Test getProgressById() - Not Found
-    // -------------------------------
+
     @Test
     void testGetProgressById_NotFound() {
         when(repository.findById(1L)).thenReturn(Optional.empty());
@@ -82,9 +75,7 @@ class CourseProgressServiceTest {
         verify(repository).findById(1L);
     }
 
-    // -------------------------------
-    // Test getProgressByCourseId()
-    // -------------------------------
+
     @Test
     void testGetProgressByCourseId() {
         CourseProgress progress = new CourseProgress(101L, 80.0, 70.0, 10.0, 100.0, 80.0,
@@ -98,9 +89,7 @@ class CourseProgressServiceTest {
         verify(repository).findByCourseId(101L);
     }
 
-    // -------------------------------
-    // Test createProgress()
-    // -------------------------------
+
     @Test
     void testCreateProgress() {
         CourseProgressRequestDTO request = new CourseProgressRequestDTO();
@@ -134,9 +123,7 @@ class CourseProgressServiceTest {
         verify(repository).save(any(CourseProgress.class));
     }
 
-    // -------------------------------
-    // Test updateProgress() - Found
-    // -------------------------------
+
     @Test
     void testUpdateProgress_Found() {
         CourseProgress existing = new CourseProgress(101L, 80.0, 70.0, 10.0, 100.0, 80.0,
@@ -163,9 +150,7 @@ class CourseProgressServiceTest {
         verify(repository).save(any(CourseProgress.class));
     }
 
-    // -------------------------------
-    // Test updateProgress() - Not Found
-    // -------------------------------
+
     @Test
     void testUpdateProgress_NotFound() {
         when(repository.findById(1L)).thenReturn(Optional.empty());
@@ -176,9 +161,7 @@ class CourseProgressServiceTest {
         verify(repository).findById(1L);
     }
 
-    // -------------------------------
-    // Test deleteProgress() - Found
-    // -------------------------------
+
     @Test
     void testDeleteProgress_Found() {
         CourseProgress existing = new CourseProgress(101L, 80.0, 70.0, 10.0, 100.0, 80.0,
@@ -192,9 +175,7 @@ class CourseProgressServiceTest {
         verify(repository).delete(existing);
     }
 
-    // -------------------------------
-    // Test deleteProgress() - Not Found
-    // -------------------------------
+
     @Test
     void testDeleteProgress_NotFound() {
         when(repository.findById(1L)).thenReturn(Optional.empty());

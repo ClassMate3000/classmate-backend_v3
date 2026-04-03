@@ -36,7 +36,7 @@ class TaskIntegrationTest {
 
     @Test
     void shouldPersistAndLoadTask() {
-        // Given
+
         Task task = new Task();
         task.setTaskId(1L);
         task.setTitle("Integration Test Task");
@@ -51,10 +51,8 @@ class TaskIntegrationTest {
         task.setScorePercent(0.0);
         task.setCourseId(101L);
 
-        // When
         taskRepository.save(task);
 
-        // Then
         assertThat(taskRepository.findAll()).hasSize(1);
 
         Task loaded = taskRepository.findAll().get(0);

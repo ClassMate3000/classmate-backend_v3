@@ -16,7 +16,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@ActiveProfiles("test") // THIS IS THE KEY FIX
+@ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY) // forces H2
 @TestPropertySource(properties = {
         "spring.flyway.enabled=false",              // disable Flyway

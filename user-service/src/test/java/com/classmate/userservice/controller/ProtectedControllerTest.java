@@ -19,9 +19,6 @@ public class ProtectedControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    // =========================
-    // TEST: HELLO PROTECTED
-    // =========================
     @Test
     void testHelloProtected() throws Exception {
 
