@@ -37,7 +37,6 @@ class ReminderIntegrationTest {
     @Test
     void shouldPersistAndLoadReminder() {
 
-        // Given
         Reminder reminder = new Reminder(
                 1L,
                 101L,
@@ -46,10 +45,8 @@ class ReminderIntegrationTest {
                 false
         );
 
-        // When
         reminderRepository.save(reminder);
 
-        // Then
         assertThat(reminderRepository.findAll()).hasSize(1);
     }
 }

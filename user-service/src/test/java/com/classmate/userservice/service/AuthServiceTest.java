@@ -11,7 +11,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,7 +24,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 // ============================================================
-// TEST CLASS: AuthService
 // PURPOSE: Unit tests for service layer (register + login)
 // ============================================================
 @ExtendWith(MockitoExtension.class)
@@ -57,9 +55,6 @@ public class AuthServiceTest {
         sampleUser.setPassword("encodedPassword");
     }
 
-    // =========================
-    // TEST: REGISTER SUCCESS
-    // =========================
     @Test
     void testRegisterSuccess() {
         // Arrange
@@ -84,9 +79,6 @@ public class AuthServiceTest {
         verify(userRepository).save(any(User.class));
     }
 
-    // =========================
-    // TEST: REGISTER FAILURE (EMAIL EXISTS)
-    // =========================
     @Test
     void testRegisterEmailAlreadyExists() {
         // Arrange
@@ -105,9 +97,6 @@ public class AuthServiceTest {
         verify(userRepository, never()).save(any(User.class));
     }
 
-    // =========================
-    // TEST: LOGIN SUCCESS
-    // =========================
     @Test
     void testLoginSuccess() {
         // Arrange
@@ -126,9 +115,6 @@ public class AuthServiceTest {
         assertThat(response.token()).isEqualTo("token123");
     }
 
-    // =========================
-    // TEST: LOGIN FAILURE (INVALID EMAIL)
-    // =========================
     @Test
     void testLoginInvalidEmail() {
         // Arrange
@@ -144,9 +130,6 @@ public class AuthServiceTest {
         assertThat(exception.getMessage()).isEqualTo("invalid credentials");
     }
 
-    // =========================
-    // TEST: LOGIN FAILURE (INVALID PASSWORD)
-    // =========================
     @Test
     void testLoginInvalidPassword() {
         // Arrange

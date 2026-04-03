@@ -33,7 +33,6 @@ class ReminderServiceTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    // CREATE
     @Test
     void shouldCreateReminder() {
 
@@ -58,7 +57,6 @@ class ReminderServiceTest {
         verify(repository).save(any(Reminder.class));
     }
 
-    // GET BY ID
     @Test
     void shouldReturnReminderById() {
 
@@ -72,7 +70,6 @@ class ReminderServiceTest {
         assertThat(response).isNotNull();
     }
 
-    // NOT FOUND
     @Test
     void shouldThrowExceptionWhenReminderNotFound() {
 
@@ -82,7 +79,6 @@ class ReminderServiceTest {
                 .isInstanceOf(ReminderNotFoundException.class);
     }
 
-    // GET ALL
     @Test
     void shouldReturnAllReminders() {
 
@@ -93,7 +89,6 @@ class ReminderServiceTest {
         assertThat(result).hasSize(2);
     }
 
-    // GET BY TASK ID
     @Test
     void shouldReturnRemindersByTaskId() {
 
@@ -104,7 +99,6 @@ class ReminderServiceTest {
         assertThat(result).hasSize(1);
     }
 
-    // UPDATE
     @Test
     void shouldUpdateReminder() {
 
@@ -126,7 +120,6 @@ class ReminderServiceTest {
         verify(repository).save(existing);
     }
 
-    // DELETE
     @Test
     void shouldDeleteReminder() {
 
@@ -137,7 +130,6 @@ class ReminderServiceTest {
         verify(repository).deleteByReminderId(1L);
     }
 
-    // DELETE NOT FOUND
     @Test
     void shouldThrowWhenDeletingNonExistingReminder() {
 

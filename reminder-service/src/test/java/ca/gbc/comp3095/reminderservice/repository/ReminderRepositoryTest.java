@@ -15,7 +15,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataMongoTest  // Only loads MongoDB-related beans
-@ActiveProfiles("test") // Uses application-test.properties
+@ActiveProfiles("test")
 class ReminderRepositoryTest {
 
     @Autowired

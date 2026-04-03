@@ -9,12 +9,10 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 // ============================================================
-// TEST CLASS: JwtService
 // PURPOSE: Unit tests for JWT token generation
 // ============================================================
 @ActiveProfiles("test")
@@ -22,7 +20,6 @@ public class JwtServiceTest {
 
     private JwtService jwtService;
 
-    // Test configuration
     private final String testSecret = "thisIsA32ByteLongSecretForTesting!!";
     private final long testExpirationMs = 1000 * 60 * 60; // 1 hour in ms
 
@@ -32,9 +29,6 @@ public class JwtServiceTest {
         jwtService = new JwtService(testSecret, testExpirationMs);
     }
 
-    // =========================
-    // TEST: GENERATE TOKEN
-    // =========================
     @Test
     void testGenerateTokenNotNull() {
         // Arrange
@@ -47,9 +41,6 @@ public class JwtServiceTest {
         assertThat(token).isNotNull().isNotEmpty();
     }
 
-    // =========================
-    // TEST: TOKEN CONTAINS SUBJECT
-    // =========================
     @Test
     void testGenerateTokenContainsSubject() {
         // Arrange
@@ -70,9 +61,6 @@ public class JwtServiceTest {
         assertThat(claims.getSubject()).isEqualTo(subject);
     }
 
-    // =========================
-    // TEST: TOKEN EXPIRATION
-    // =========================
     @Test
     void testGenerateTokenExpiration() {
         // Arrange

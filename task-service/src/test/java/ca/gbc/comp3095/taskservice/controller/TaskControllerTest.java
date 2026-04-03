@@ -38,7 +38,6 @@ class TaskControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    // CREATE
     @Test
     void shouldCreateTask() throws Exception {
 
@@ -72,9 +71,6 @@ class TaskControllerTest {
                 .andExpect(jsonPath("$.taskId").value(1L));
     }
 
-
-
-    // GET BY ID
     @Test
     void shouldGetTaskById() throws Exception {
 
@@ -93,7 +89,6 @@ class TaskControllerTest {
                 .andExpect(jsonPath("$.taskId").value(1L));
     }
 
-    // GET ALL
     @Test
     void shouldGetAllTasks() throws Exception {
 
@@ -112,7 +107,6 @@ class TaskControllerTest {
                 .andExpect(jsonPath("$.length()").value(1));
     }
 
-    // DELETE
     @Test
     void shouldDeleteTask() throws Exception {
         mockMvc.perform(delete("/api/v1/tasks/1"))

@@ -31,7 +31,7 @@ class TaskServiceTest {
         taskService = new TaskServiceImpl(taskRepository, sequenceGenerator);
     }
 
-    // Helper to create a TaskRequestDTO
+    // Create a TaskRequestDTO
     private TaskRequestDTO sampleRequest() {
         TaskRequestDTO request = new TaskRequestDTO();
         request.setCourseId(100L);
@@ -48,7 +48,6 @@ class TaskServiceTest {
         return request;
     }
 
-    // CREATE
     @Test
     void shouldCreateTask() {
         when(sequenceGenerator.getNextSequence("task_sequence")).thenReturn(1L);
@@ -70,7 +69,6 @@ class TaskServiceTest {
         assertThat(captor.getValue().getTaskId()).isEqualTo(1L);
     }
 
-    // GET BY ID
     @Test
     void shouldGetTaskById() {
         Task task = new Task();
@@ -89,7 +87,6 @@ class TaskServiceTest {
         assertThrows(TaskNotFoundException.class, () -> taskService.getTaskByTaskId(999L));
     }
 
-    // GET ALL
     @Test
     void shouldGetAllTasks() {
         Task task1 = new Task();
@@ -102,7 +99,6 @@ class TaskServiceTest {
         assertThat(result).hasSize(2);
     }
 
-    // UPDATE
     @Test
     void shouldUpdateTask() {
         Task existing = new Task();
@@ -125,7 +121,6 @@ class TaskServiceTest {
         assertThrows(TaskNotFoundException.class, () -> taskService.updateTask(999L, sampleRequest()));
     }
 
-    // DELETE
     @Test
     void shouldDeleteTask() {
         when(taskRepository.existsByTaskId(4L)).thenReturn(true);
@@ -139,7 +134,6 @@ class TaskServiceTest {
         assertThrows(TaskNotFoundException.class, () -> taskService.deleteTask(999L));
     }
 
-    // GET BY COURSE
     @Test
     void shouldGetTasksByCourse() {
         Task t1 = new Task();
@@ -152,7 +146,6 @@ class TaskServiceTest {
         assertThat(tasks).hasSize(2);
     }
 
-    // GET BY COURSE AND COMPLETION
     @Test
     void shouldGetTasksByCourseAndCompletion() {
         Task t1 = new Task();

@@ -1,6 +1,5 @@
 package com.classmate.userservice.repository;
 
-import com.classmate.userservice.controller.ProtectedController;
 import com.classmate.userservice.model.User;
 import org.junit.jupiter.api.Test;
 
@@ -8,8 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
@@ -21,9 +19,6 @@ public class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
-    // =========================
-    // TEST: SAVE + FIND BY EMAIL
-    // =========================
     @Test
     void testFindByEmail() {
 
@@ -44,9 +39,6 @@ public class UserRepositoryTest {
         assertThat(foundUser.get().getEmail()).isEqualTo("john@example.com");
     }
 
-    // =========================
-    // TEST: EXISTS BY EMAIL (TRUE)
-    // =========================
     @Test
     void testExistsByEmailTrue() {
 
@@ -66,9 +58,6 @@ public class UserRepositoryTest {
         assertThat(exists).isTrue();
     }
 
-    // =========================
-    // TEST: EXISTS BY EMAIL (FALSE)
-    // =========================
     @Test
     void testExistsByEmailFalse() {
 

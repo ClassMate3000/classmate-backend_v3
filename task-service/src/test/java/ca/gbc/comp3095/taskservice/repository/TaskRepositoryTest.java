@@ -15,7 +15,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataMongoTest
-@ActiveProfiles("test") // optional: use test profile if needed
+@ActiveProfiles("test")
 class TaskRepositoryTest {
 
     @Autowired
@@ -26,7 +26,7 @@ class TaskRepositoryTest {
         taskRepository.deleteAll(); // clear the database before each test
     }
 
-    // Helper method to create a sample Task
+    // Create a sample Task
     private Task createSampleTask(Long taskId, Long courseId, String title) {
         Task task = new Task();
         task.setTaskId(taskId);

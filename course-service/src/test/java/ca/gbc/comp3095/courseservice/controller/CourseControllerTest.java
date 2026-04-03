@@ -21,7 +21,6 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(CourseController.class)
@@ -147,7 +146,7 @@ class CourseControllerTest {
         updatedRequest.setGradeGoal(95);
         updatedRequest.setStartWeek(LocalDate.now());
 
-        // ✅ FIX: Add valid meeting
+        // Add valid meeting
         CourseRequestDTO.MeetingDTO meeting = new CourseRequestDTO.MeetingDTO();
         meeting.setDayOfWeek(1);
         meeting.setStartTime(LocalTime.of(9, 0));
