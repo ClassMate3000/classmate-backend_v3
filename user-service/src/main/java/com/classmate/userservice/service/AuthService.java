@@ -24,33 +24,28 @@ public class AuthService {
     }
 
     public AuthResponseDTO register(RegisterRequestDTO request) {
-
         if (userRepository.existsByEmail(request.email())) {
             throw new RuntimeException("Email already in use");
         }
-
         User user = new User();
         user.setFirstName(request.firstName());
         user.setLastName(request.lastName());
         user.setEmail(request.email());
         user.setPassword(passwordEncoder.encode(request.password()));
-
         User saved = userRepository.save(user);
-
         String token = jwtService.generateToken(saved.getEmail());
-        return new AuthResponseDTO(saved.getUserId(), token);
+        // Return firstName and lastName so the frontend can display user initials
+        return new AuthResponseDTO(saved.getUserId(), token, saved.getFirstName(), saved.getLastName());
     }
 
     public AuthResponseDTO login(LoginRequestDTO request) {
-
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new RuntimeException("invalid credentials"));
-
         if (!passwordEncoder.matches(request.password(), user.getPassword())) {
             throw new RuntimeException("invalid credentials");
         }
-
         String token = jwtService.generateToken(user.getEmail());
-        return new AuthResponseDTO(user.getUserId(), token);
+        // Return firstName and lastName so the frontend can display user initials
+        return new AuthResponseDTO(user.getUserId(), token, user.getFirstName(), user.getLastName());
     }
 }
