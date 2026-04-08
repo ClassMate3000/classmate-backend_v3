@@ -56,10 +56,28 @@ Handles course management, task tracking, grade snapshots, reminders, and JWT-ba
 
 ## Getting Started
 
-Clone and start all services:
+Clone the repository:
 ```bash
 git clone https://github.com/ClassMate3000/classmate-backend_v3.git
 cd classmate-backend_v3
+```
+
+Copy the environment file and configure it:
+```bash
+cp .env.example .env
+```
+
+Open `.env` and set the following — JWT_SECRET must be 64+ characters:
+```
+POSTGRES_DB=classmate
+POSTGRES_USER=classmate
+POSTGRES_PASSWORD=classmate123
+JWT_SECRET=your-64-plus-character-secret-here
+SPRING_PROFILES_ACTIVE=docker
+```
+
+Start all services:
+```bash
 docker compose up -d --build
 ```
 
@@ -74,18 +92,18 @@ All services should show `Up` status. The API Gateway is available at `http://lo
 
 ## Auth Flow
 
-Register a user:
+Register a user (password must be at least 6 characters):
 ```bash
 curl -X POST http://localhost:8091/api/v1/auth/register \
   -H "Content-Type: application/json" \
-  -d '{"firstName":"Test","lastName":"User","email":"test@test.com","password":"123"}'
+  -d '{"firstName":"Test","lastName":"User","email":"test@test.com","password":"123456"}'
 ```
 
 Login to get a JWT token:
 ```bash
 curl -X POST http://localhost:8091/api/v1/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"test@test.com","password":"123"}'
+  -d '{"email":"test@test.com","password":"123456"}'
 ```
 
 Use the returned token on all subsequent requests:
@@ -134,9 +152,13 @@ classmate-backend_v3/
 ├── task-service/
 ├── reminder-service/
 ├── docker/
+├── docs/
+├── src/
 ├── docker-compose.yml
 ├── build.gradle
 ├── settings.gradle
+├── gradlew
+├── rebuild-all-services.ps1
 └── README.md
 ```
 
