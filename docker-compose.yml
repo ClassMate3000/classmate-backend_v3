@@ -1,11 +1,11 @@
 # ----------------------------------------------------------------------------------
 # Commands to run this compose file:
 #
-#   docker compose -p classmate_app-integrated -f docker-compose.yml up -d
+#   docker compose -p classmate3000_app-integrated -f docker-compose.yml up -d
 #       - Starts containers in detached mode (-d)
 #       - Uses existing images if already built
 #
-#   docker compose -p classmate_app-integrated -f docker-compose.yml up -d --build
+#   docker compose -p classmate3000_app-integrated -f docker-compose.yml up -d --build
 #       - Forces rebuild of images before starting containers
 # ----------------------------------------------------------------------------------
 
@@ -64,6 +64,11 @@ services:
         SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}  # NEZIHE - aligned with Postgres
         SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
         JWT_SECRET: ${JWT_SECRET}
+        KEYCLOAK_REALM: classmate
+        KEYCLOAK_AUTH_SERVER_URL: http://keycloak:8080
+        KEYCLOAK_PUBLIC_CLIENT_ID: classmate-frontend
+        KEYCLOAK_SSL_REQUIRED: none
+        KEYCLOAK_CLIENT_PUBLIC: true
     ports:
         - "8088:8089"
     restart: unless-stopped
@@ -166,6 +171,11 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
       JWT_SECRET: ${JWT_SECRET}
+      KEYCLOAK_REALM: classmate
+      KEYCLOAK_AUTH_SERVER_URL: http://keycloak:8080
+      KEYCLOAK_PUBLIC_CLIENT_ID: classmate-frontend
+      KEYCLOAK_SSL_REQUIRED: none
+      KEYCLOAK_CLIENT_PUBLIC: true
     ports:
       - "8091:8080"
     restart: unless-stopped

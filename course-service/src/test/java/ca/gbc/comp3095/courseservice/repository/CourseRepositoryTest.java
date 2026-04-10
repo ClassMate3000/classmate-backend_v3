@@ -1,16 +1,30 @@
 package ca.gbc.comp3095.courseservice.repository;
 
 import ca.gbc.comp3095.courseservice.model.Course;
+import ca.gbc.comp3095.courseservice.model.CourseMeeting;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.TestPropertySource;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
+@TestPropertySource(properties = {
+        "spring.flyway.enabled=false",
+        "spring.jpa.hibernate.ddl-auto=create-drop",
+        "spring.jpa.properties.hibernate.default_schema=PUBLIC",
+        "spring.jpa.show-sql=true"
+})
 class CourseRepositoryTest {
 
     @Autowired
@@ -20,24 +34,36 @@ class CourseRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        // Create a reusable Course instance for tests
-        course = new Course("COMP3095", "Microservices", "Spring Boot");
+        courseRepository.deleteAll();
+
+        course = new Course(
+                "COMP3095",
+                "Microservices",
+                "Spring Boot",
+                new ArrayList<>(List.of(new CourseMeeting(1, LocalTime.of(9,0), LocalTime.of(10,0)))), // mutable
+                85,
+                LocalDate.now()
+        );
     }
 
     @Test
     void shouldSaveCourse() {
         Course saved = courseRepository.save(course);
 
-        // Verify that ID is generated and course is saved
-        assertThat(saved.getId()).isNotNull();
+        assertThat(saved.getCourseId()).isNotNull();
         assertThat(saved.getCode()).isEqualTo("COMP3095");
+        assertThat(saved.getTitle()).isEqualTo("Microservices");
+        assertThat(saved.getInstructor()).isEqualTo("Spring Boot");
+        assertThat(saved.getMeetings()).hasSize(1);
+        assertThat(saved.getGradeGoal()).isEqualTo(85);
+        assertThat(saved.getStartWeek()).isEqualTo(course.getStartWeek());
     }
 
     @Test
     void shouldFindCourseById() {
         Course saved = courseRepository.save(course);
 
-        Optional<Course> found = courseRepository.findById(saved.getId());
+        Optional<Course> found = courseRepository.findById(saved.getCourseId());
 
         assertThat(found).isPresent();
         assertThat(found.get().getTitle()).isEqualTo("Microservices");
@@ -49,22 +75,23 @@ class CourseRepositoryTest {
 
         var courses = courseRepository.findAll();
 
-        assertThat(courses).isNotEmpty();
+        assertThat(courses).hasSize(1);
         assertThat(courses.get(0).getCode()).isEqualTo("COMP3095");
     }
+
 
     @Test
     void shouldUpdateCourse() {
         Course saved = courseRepository.save(course);
 
-        // Update course details
         saved.setTitle("Advanced Microservices");
-        saved.setDescription("Spring Boot + Spring Cloud");
+        saved.setGradeGoal(90);
         Course updated = courseRepository.save(saved);
 
         assertThat(updated.getTitle()).isEqualTo("Advanced Microservices");
-        assertThat(updated.getDescription()).isEqualTo("Spring Boot + Spring Cloud");
+        assertThat(updated.getGradeGoal()).isEqualTo(90);
     }
+
 
     @Test
     void shouldDeleteCourse() {
@@ -72,7 +99,7 @@ class CourseRepositoryTest {
 
         courseRepository.delete(saved);
 
-        Optional<Course> deleted = courseRepository.findById(saved.getId());
+        Optional<Course> deleted = courseRepository.findById(saved.getCourseId());
         assertThat(deleted).isNotPresent();
     }
 }

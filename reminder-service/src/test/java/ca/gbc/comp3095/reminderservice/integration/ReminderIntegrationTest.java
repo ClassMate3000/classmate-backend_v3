@@ -36,16 +36,13 @@ class ReminderIntegrationTest {
 
     @Test
     void shouldPersistAndLoadReminder() {
+
         Reminder reminder = new Reminder(
-                "Midterm Reminder",
-                "Study",
-                "C101",
-                "HIGH",
-                "2026-01-10",
-                "09:00",
-                "Don’t forget notes",
-                1,
-                1
+                1L,
+                101L,
+                "Integration Test Reminder",
+                java.time.LocalDateTime.now(),
+                false
         );
 
         reminderRepository.save(reminder);

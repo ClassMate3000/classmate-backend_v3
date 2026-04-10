@@ -10,6 +10,12 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 @EnableWebFluxSecurity
 public class SecurityConfig {
 
+    /*
+     ============================================================
+     PRODUCTION CONFIG — OAuth2 / JWT (Keycloak)
+     Commented out for demo deployment on Render Free tier
+     ============================================================
+
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         return http
@@ -30,14 +36,32 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
 
                                 // Proxied OpenAPI from services (aggregation)
-                                "/*/v3/api-docs/**",
+                                //  removed problematic code
 
-                                // Any other public endpoints you want
-                                "/api/v1/courses/health"
-                        ).permitAll()
-                        .anyExchange().authenticated()
+     "/api/v1/courses/health"
+     ).permitAll()
+     .anyExchange().authenticated()
+     )
+     .oauth2ResourceServer(oauth2 -> oauth2.jwt())
+     .build();
+     }
+     */
+
+    /*
+     ============================================================
+     DEMO CONFIG — Permit All (No Authentication)
+     Safe for presentations and free hosting environments
+     ============================================================
+    */
+
+    @Bean
+    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+        return http
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .cors(cors -> {})
+                .authorizeExchange(exchanges -> exchanges
+                        .anyExchange().permitAll()   //  Allow everything
                 )
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt())
-                .build();
+                .build(); //  No OAuth2 / JWT
     }
 }

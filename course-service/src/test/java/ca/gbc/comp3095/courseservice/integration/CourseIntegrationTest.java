@@ -1,44 +1,61 @@
 package ca.gbc.comp3095.courseservice.integration;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
-import ca.gbc.comp3095.courseservice.repository.CourseRepository;
 import ca.gbc.comp3095.courseservice.model.Course;
+import ca.gbc.comp3095.courseservice.model.CourseMeeting;
+import ca.gbc.comp3095.courseservice.repository.CourseRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.TestPropertySource;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-@Testcontainers
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
+@TestPropertySource(properties = {
+        "spring.flyway.enabled=false",
+        "spring.jpa.hibernate.ddl-auto=create-drop",
+        "spring.jpa.show-sql=true",
+        "spring.jpa.properties.hibernate.default_schema=PUBLIC"
+})
 public class CourseIntegrationTest {
-
-    @Container
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15")
-            .withDatabaseName("testdb")
-            .withUsername("testuser")
-            .withPassword("testpass");
-
-
-    @DynamicPropertySource
-    static void setProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-    }
 
     @Autowired
     private CourseRepository courseRepository;
 
+    private Course course;
+
+    @BeforeEach
+    void setUp() {
+        courseRepository.deleteAll();
+
+        course = new Course(
+                "C101",
+                "Test Course",
+                "Test Instructor",
+                new ArrayList<>(List.of(new CourseMeeting(1, LocalTime.of(9, 0), LocalTime.of(10, 0)))), // mutable
+                90,
+                LocalDate.now()
+        );
+    }
+
     @Test
-    void testPostgresRepository() {
-        courseRepository.save(new Course("C101", "Test Course", "This is a test course"));
-        assertThat(courseRepository.findAll()).isNotEmpty();
+    void testH2RepositorySaveAndFind() {
+        Course saved = courseRepository.save(course);
+
+        assertThat(saved.getCourseId()).isNotNull();
+        assertThat(saved.getCode()).isEqualTo("C101");
+        assertThat(saved.getTitle()).isEqualTo("Test Course");
+
+        List<Course> allCourses = courseRepository.findAll();
+        assertThat(allCourses).hasSize(1);
+        assertThat(allCourses.get(0).getInstructor()).isEqualTo("Test Instructor");
     }
 }
