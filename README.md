@@ -1,116 +1,170 @@
-# ClassMate Backend
+# ClassMate — Backend
 
-ClassMate is a containerized microservices-based backend system designed to
-support student academic planning, task management, grade tracking, and reminders.
-
-The backend follows modern Spring Boot microservice architecture principles,
-with database-per-service isolation, API Gateway routing, and containerized deployment.
+Containerized microservices backend for the ClassMate student academic planning application.
+Handles course management, task tracking, grade snapshots, reminders, and JWT-based authentication.
 
 ---
 
-## Architecture Overview
+## Architecture
 
-- Microservices architecture
-- API Gateway for routing and versioning
-- Database per service
+- Microservices architecture — one service per domain
+- API Gateway on port 8091 handles all routing and JWT verification
+- Database per service — PostgreSQL for relational data, MongoDB for document data
 - Docker Compose for local orchestration
-- Flyway for PostgreSQL migrations
+- Flyway for PostgreSQL schema migrations
 - Testcontainers for integration testing
 
-Services:
-- API Gateway
-- Course Service (PostgreSQL)
-- Grade Service (PostgreSQL)
-- Task Service (MongoDB)
-- Reminder Service (MongoDB)
+---
+
+## Services
+
+| Service | Database | Port | Description |
+|---|---|---|---|
+| api-gateway | — | 8091 | Routes all requests, enforces JWT auth |
+| user-service | PostgreSQL | 8088 | Registration, login, JWT token generation |
+| course-service | PostgreSQL | 8084 | Course CRUD, meeting schedules, grade goals |
+| courseprogress-service | PostgreSQL | 8085 | Weekly grade snapshots per course |
+| task-service | MongoDB | 8086 | Task CRUD, priority, due dates |
+| reminder-service | MongoDB | 8087 | Reminder CRUD linked to tasks |
 
 ---
 
 ## Tech Stack
 
 - Java 21
-- Spring Boot
-- Spring Cloud Gateway
-- PostgreSQL
-- MongoDB
+- Spring Boot 3.2
+- Spring Cloud Gateway (WebFlux)
+- Spring Security + JWT (JJWT)
+- PostgreSQL 15
+- MongoDB 7
 - Flyway
 - Docker & Docker Compose
-- JUnit 5
+- JUnit 5 + Mockito
 - Testcontainers
-- Gradle
+- Gradle (multi-project build)
+- Swagger / OpenAPI (per service)
 
 ---
 
 ## Prerequisites
 
-Ensure the following are installed:
-
 - Java 21+
 - Docker & Docker Compose
-- Gradle (or use `./gradlew`)
 - Git
 
 ---
 
-## Build & Run (Docker)
+## Getting Started
 
-From the project root:
-
+Clone the repository:
 ```bash
+git clone https://github.com/ClassMate3000/classmate-backend_v3.git
+cd classmate-backend_v3
+```
 
+Copy the environment file and configure it:
+```bash
+cp .env.example .env
+```
+
+Open `.env` and set the following — JWT_SECRET must be 64+ characters:
+```
+POSTGRES_DB=classmate
+POSTGRES_USER=classmate
+POSTGRES_PASSWORD=classmate123
+JWT_SECRET=your-64-plus-character-secret-here
+SPRING_PROFILES_ACTIVE=docker
+```
+
+Start all services:
+```bash
 docker compose up -d --build
+```
 
-1. Verify containers are running:
-
+Verify containers are running:
+```bash
 docker ps
+```
 
-2. Running Tests
-Run all unit and integration tests:
+All services should show `Up` status. The API Gateway is available at `http://localhost:8091`.
 
+---
+
+## Auth Flow
+
+Register a user (password must be at least 6 characters):
+```bash
+curl -X POST http://localhost:8091/api/v1/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"firstName":"Test","lastName":"User","email":"test@test.com","password":"123456"}'
+```
+
+Login to get a JWT token:
+```bash
+curl -X POST http://localhost:8091/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@test.com","password":"123456"}'
+```
+
+Use the returned token on all subsequent requests:
+```bash
+curl http://localhost:8091/api/v1/courses \
+  -H "Authorization: Bearer <token>"
+```
+
+---
+
+## API Endpoints
+
+All endpoints are accessed through the API Gateway on port 8091.
+
+| Resource | Method | Endpoint |
+|---|---|---|
+| Auth | POST | `/api/v1/auth/register` |
+| Auth | POST | `/api/v1/auth/login` |
+| Courses | GET, POST | `/api/v1/courses` |
+| Courses | GET, PUT, DELETE | `/api/v1/courses/{id}` |
+| Tasks | GET, POST | `/api/v1/tasks` |
+| Tasks | GET, PUT, DELETE | `/api/v1/tasks/{id}` |
+| Reminders | GET, POST | `/api/v1/reminders` |
+| Reminders | GET, PUT, DELETE | `/api/v1/reminders/{id}` |
+| Course Progress | GET, POST | `/api/v1/course-progress` |
+| Course Progress | GET, PUT, DELETE | `/api/v1/course-progress/{id}` |
+
+---
+
+## Running Tests
+```bash
 ./gradlew test
+```
 
-Integration tests automatically spin up Postgres and MongoDB using Testcontainers.
+Integration tests automatically spin up PostgreSQL and MongoDB via Testcontainers — no external database setup required.
 
-3. API Gateway Endpoints
-All services are accessed through the API Gateway:
+---
 
-Service	Endpoint
-Courses	/api/v1/courses
-Grades	/api/v1/grades
-Tasks	/api/v1/tasks
-Reminders	/api/v1/reminders
-
-4. Smoke Test Examples
-
-curl http://localhost:8080/api/v1/courses
-curl http://localhost:8080/api/v1/tasks
-
-5. Project Structure
-
-classmate-backend/
+## Project Structure
+```
+classmate-backend_v3/
 ├── api-gateway/
+├── user-service/
 ├── course-service/
-├── grade-service/
+├── courseprogress-service/
 ├── task-service/
 ├── reminder-service/
 ├── docker/
-│   ├── postgres/
-│   └── mongodb/
+├── docs/
+├── src/
 ├── docker-compose.yml
+├── build.gradle
+├── settings.gradle
+├── gradlew
+├── rebuild-all-services.ps1
 └── README.md
+```
 
-6. Testing Strategy
-- Unit tests per service
+---
 
-- Integration tests using Testcontainers
+## Frontend
 
-- Containerized databases ensure reproducibility across environments
-
-7. Future Enhancements
-- Swagger/OpenAPI documentation
-
-- OAuth2 / Keycloak security
-
-- CI/CD pipeline
-
-- Event-driven messaging
+See [classmate-frontend_v3](https://github.com/ClassMate3000/classmate-frontend_v3) for the React frontend.
+The frontend expects the API Gateway on port `8091` — set `VITE_API_GATEWAY_URL=http://localhost:8091` in your `.env`.
